@@ -1,0 +1,228 @@
+# Args: <path_to_suncg_house> <output_dir>
+{
+  "version": 3,
+  "setup": {
+    "blender_install_path": "/home_local/<env:USER>/blender/",
+    "pip": [
+      "h5py"
+    ]
+  },
+  "modules": [
+    {
+      "module": "main.Initializer",
+      "config": {
+        "global": {
+          "max_bounces": 200,
+          "diffuse_bounces": 200,
+          "glossy_bounces": 200,
+          "transmission_bounces": 200,
+          "transparency_bounces": 200,
+          "output_dir": "<args:1>",
+          "number_of_samples": 1,
+          "key_objects": {
+            "provider": "getter.Entity",
+            "conditions": {
+              "cp_key_object": True
+              }
+              },
+          "other_objects": {
+            "provider": "getter.Entity",
+            "conditions": {
+              "cp_other_object": True
+              }
+              },
+          "objects_to_sample": {
+            "provider": "getter.Entity",
+            "conditions": {
+              "cp_shape_net_object": True,
+              #"type": "MESH"
+          }
+          },
+          "room_objects": {
+            "provider": "getter.Entity",
+            "conditions": {
+              "cp_room": True,
+            }
+          }
+        }
+      }
+    },
+    {
+      "module": "loader.SuncgLoader",
+      "config": {
+        "path": "<args:0>",
+        "add_properties": {
+          "cp_physics": False,
+          "cp_room": True,
+          "cp_category_id": 0
+          }
+      }
+    },
+    {
+      "module": "manipulators.MaterialManipulator",
+      "config": {
+    "selector": {
+      "provider": "getter.Material",
+      "conditions": [
+        {"name": "wood*"},
+        {"name": "laminate*"},
+        {"name": "beam*"}
+      ]
+    },
+    "cf_set_Roughness": {
+       "provider": "sampler.Value",
+       "type": "float",
+       "min": 0.1,
+       "max": 0.3,
+    },
+    "cf_set_Specular": {
+      "provider": "sampler.Value",
+      "type": "float",
+      "min": 0.7,
+      "max": 1.0,
+    },
+    "cf_color_link_to_displacement": {
+      "provider": "sampler.Value",
+      "type": "float",
+      "min": 0.001,
+      "max": 0.15,
+    },
+    "mode": "once_for_each"
+  }
+},
+{
+  "module": "manipulators.MaterialManipulator",
+  "config": {
+    "selector": {
+      "provider": "getter.Material",
+      "conditions": [
+        { "name": "tile*" },
+        { "name": "brick*" },
+        { "name": "stone*" }
+      ]
+    },
+    "cf_set_Roughness": {
+      "provider": "sampler.Value",
+      "type": "float",
+      "min": 0.1,
+      "max": 0.3,  # 0.2
+    },
+    "cf_set_Specular": {
+      "provider": "sampler.Value",
+      "type": "float",
+      "min": 0.7,  # 0.9
+      "max": 1.0,
+    },
+    "mode": "once_for_each"
+  }
+},
+{
+  "module": "manipulators.MaterialManipulator",
+  "config": {
+    "selector": {
+      "provider": "getter.Material",
+      "conditions": [
+      { "name": "carpet*" },
+      { "name": "textile*" }
+      ]
+    },
+    "cf_set_Roughness": {
+      "provider": "sampler.Value",
+      "type": "float",
+      "min": 0.1,
+      "max": 0.3,
+    },
+    "cf_set_Specular": {
+      "provider": "sampler.Value",
+      "type": "float",
+      "min": 0.7,
+      "max": 0.9, # 0.3
+    },
+    "mode": "once_for_each"
+  }
+},
+    {
+      "module": "manipulators.WorldManipulator",
+      "config": {
+        "cp_category_id": 0
+      }
+    },
+    {
+      "module": "lighting.SuncgLighting",
+    },
+    {
+      "module": "camera.SuncgCameraSampler",
+      "config": {
+        "intrinsics": {
+          "resolution_x": 736,
+          "resolution_y": 414
+        },
+        "cam_poses": [{
+          "number_of_samples": 1,
+          "proximity_checks": {
+            "min": 1.5
+          },
+          "min_interest_score": 0.4,
+          "max_tries": 100000,
+          "resolution_x": 736,
+          "resolution_y": 414,
+          "location": {
+            "provider":"sampler.Uniform3d",
+            "max":[0, 0, 2],
+            "min":[0, 0, 0.5]
+          },
+          "rotation": {
+            "value": {
+              "provider":"sampler.Uniform3d",
+              "max":[1.2217, 0, 6.283185307],
+              "min":[1.2217, 0, 0]
+            }
+          },
+        }]
+      }
+    },
+    {
+      "module": "object.ObjectPoseShifter",
+      "config": {
+        "objects_to_shift": 1,
+        "same_direction": False,
+        "x_shift": 0.25,
+        "y_shift": 0.25,
+        "z_shift": 0.25,
+        "rx_shift": 0.4,
+        "ry_shift": 0.4,
+        "rz_shift": 0.4,
+      }
+    },
+    {
+      "module": "renderer.SegMapRenderer",
+      "config": {
+        "samples": 1,
+      }
+    },
+    {
+      "module": "renderer.RgbRenderer",
+      "config": {
+        "output_key": "colors",
+        "use_alpha": True,
+      }
+    },
+    {
+      "module": "writer.ObjectStateWriter"
+    },
+    {
+      "module": "writer.LightStateWriter"
+    },
+    {
+      "module": "writer.CameraStateWriter"
+    },
+    {
+      "module": "writer.Hdf5Writer",
+      "config": {
+        "postprocessing_modules": {
+          "depth": [{"module": "postprocessing.TrimRedundantChannels"}]
+        }
+      }
+    }
+  ]
+}

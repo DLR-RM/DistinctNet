@@ -1,0 +1,18 @@
+EXP:
+  ROOT: /path/to/experiment_root
+  NAME: semantic
+
+DATA:
+  ROOT: /path/to/data_root
+  NUM_WORKERS: 4
+  WITH_DISTRACTOR_OBJECTS: False
+  TRAIN:
+    BATCH_SIZE: 2
+    TRANSFORMS: True
+  VAL:
+    BATCH_SIZE: 2
+
+MODEL:
+  OUT_CH: 4  # for semantic finetuning; change to 5 if training with distractor objects
+  WEIGHTS: /path/to/state_dict.pth
+  RECURRENT: False
