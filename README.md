@@ -61,7 +61,7 @@ Please refer to yacs's documentation for further details.
 
 ## Pretrained model & Demo
 
-You can download a pretrained model trained to segment agnostic moving foreground [here](here).
+You can download a pretrained model trained to segment agnostic moving foreground [here](https://drive.google.com/file/d/1tWoSG8wyHqZ2kZQNgyb9KaOTioW5kc9w/view?usp=sharing).
 
 We provide a [demo script](demo.py) which works with a webcam. After downloading the pretrained model (or with your own), run this script to segment any moving object (or a network finetuned on hand-object segmentation) in front of a camera.
 This also works with models that are trained including distractor objects.
