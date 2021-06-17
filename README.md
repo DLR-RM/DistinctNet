@@ -9,11 +9,11 @@ Accepted at ICRA 2021. [Paper](https://arxiv.org/abs/2011.03279)
 If you find our work useful for your research, please consider citing
 
 ```
-@article{boerdijk2020learning,
-  title={" What's This?"--Learning to Segment Unknown Objects from Manipulation Sequences},
+@inproceedings{boerdijk2020learning,
+  title={" What's This?" - Learning to Segment Unknown Objects from Manipulation Sequences},
   author={Boerdijk, Wout and Sundermeyer, Martin and Durner, Maximilian and Triebel, Rudolph},
-  journal={arXiv preprint arXiv:2011.03279},
-  year={2020}
+  booktitle={ICRA},
+  year={2021}
 }
 ```
 
